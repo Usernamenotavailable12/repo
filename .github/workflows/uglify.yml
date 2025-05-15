@@ -1,0 +1,64 @@
+name: Minify Each JavaScript File Separately
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  uglify:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+          npm list terser
+
+      # Step 4: Debug src folder
+      - name: Debug src folder
+        run: |
+          echo "Contents of src folder:"
+          ls -l src || echo "src folder is missing"
+
+      # Step 5: Fix Permissions for terser
+      - name: Fix Permissions for terser
+        run: chmod +x ./node_modules/.bin/terser
+
+      # Step 6: Minify Each JS File
+      - name: Minify Each JS File
+        run: |
+          mkdir -p dist
+          for file in src/*.js; do
+            npx terser "$file" -o "dist/$(basename "$file" .js).min.js" --compress --mangle
+          done
+
+      # Step 7: Verify dist folder
+      - name: Verify dist folder
+        run: |
+          echo "Contents of dist folder:"
+          ls -l dist || echo "dist folder is missing"
+
+      # Step 8: Push the minified files to a branch
+      - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git checkout -B uglified-branch
+          git add dist
+          git commit -m "Automated minification of each JS file"
+          git push -u origin uglified-branch --force
