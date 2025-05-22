@@ -130,8 +130,6 @@ async function logCurrentPath(path, previousPath) {
   // INIT
   if (path.includes("leaderboard")) {
     leaderboardInitialize();
-  } if (path.includes("wheel")) {
-    wheelInitialize();
   } if (path.includes("welcomebonus")) {
     wheelInitialize();
   } if (path.includes("box")) {
