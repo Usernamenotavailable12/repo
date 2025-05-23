@@ -3,69 +3,69 @@ let cachedProgressData = null;
 
 function getProgressData() {
   if (!cachedProgressData) {
-      const dataElement = document.getElementById('progressBarData');
-      if (!dataElement) {
-          console.error("progressBarData element not found");
-          return null;
-      }
-      try {
-          cachedProgressData = JSON.parse(dataElement.textContent);
-      } catch (e) {
-          console.error("Error parsing progressBarData:", e);
-          return null;
-      }
+    const dataElement = document.getElementById("progressBarData");
+    if (!dataElement) {
+      console.error("progressBarData element not found");
+      return null;
+    }
+    try {
+      cachedProgressData = JSON.parse(dataElement.textContent);
+    } catch (e) {
+      console.error("Error parsing progressBarData:", e);
+      return null;
+    }
   }
   return cachedProgressData;
 }
 
 async function buildAllProgressBars(progressData) {
-    const progressBar = document.getElementById(progressData.progressBarParrent);
-    if (!progressBar) return;
-    const isUserLoginned = extractAuthDataFromCookie()?.userId == undefined ? false : true;
-    let points = null;
-    if (isUserLoginned) {
-      points = await showProgressBarMrch();
-    }
-    const breackpoints = progressData.breakpoints;
-    let currPercent = 0;
-    let lang = await document.documentElement.lang;
-  
-    const getCurrPercent = (points) => {
-      breackpoints.forEach(element => {
-        if (points > element.to) {
+  const progressBar = document.getElementById(progressData.progressBarParrent);
+  if (!progressBar) return;
+  const isUserLoginned = extractAuthDataFromCookie()?.userId == undefined ? false : true;
+  let points = null;
+  if (isUserLoginned) {
+    points = await showProgressBarMrch(progressData);
+  }
+  const breackpoints = progressData.breakpoints;
+  let currPercent = 0;
+  let lang = await document.documentElement.lang;
+
+  const getCurrPercent = (points) => {
+    breackpoints.forEach(element => {
+      if (points > element.to) {
         currPercent += 100;
         document.getElementsByClassName(`present-${element.to}`)[0]?.classList?.add("progress-achieved");
-        }
-        else if (points <= element.from) { currPercent += 0; }
-        else {
-          currPercent += (points - element.from) * 100 / (element.to - element.from);
-        }
-      });
-      currPercent = currPercent / breackpoints.length;
-    }
-  
-    await getCurrPercent(points);
-  
-    const progressBarsParrent = document.createElement("div");
-    progressBarsParrent.classList.add("progress-bars-parrent");
-  
-    let loginText = {
-      ka: "შესვლა",
-      en: "Login",
-      ru: "Вход",
-      tr: "Giriş"
-    }
-  
-    let registerText = {
-      ka: "რეგისტრაცია",
-      en: "Register",
-      ru: "Регистрация",
-      tr: "Kayıt"
-    }
-  
-  
-    if (!isUserLoginned){
-      progressBarsParrent.innerHTML = `
+      }
+      else if (points <= element.from) { currPercent += 0; }
+      else {
+        currPercent += (points - element.from) * 100 / (element.to - element.from);
+      }
+    });
+    currPercent = currPercent / breackpoints.length;
+  }
+
+  await getCurrPercent(points);
+
+  const progressBarsParrent = document.createElement("div");
+  progressBarsParrent.classList.add("progress-bars-parrent");
+
+  let loginText = {
+    ka: "შესვლა",
+    en: "Login",
+    ru: "Вход",
+    tr: "Giriş"
+  }
+
+  let registerText = {
+    ka: "რეგისტრაცია",
+    en: "Register",
+    ru: "Регистрация",
+    tr: "Kayıt"
+  }
+
+
+  if (!isUserLoginned) {
+    progressBarsParrent.innerHTML = `
         <div class="progress-bar-logout-container">
           <div class="logoutText">${progressData.logoutText[lang]}</div>
           <div class="buttonsContainer"> 
@@ -74,29 +74,29 @@ async function buildAllProgressBars(progressData) {
           </div>
         </div>
       `
-    } else if(currPercent === 100) {
-      progressBarsParrent.innerHTML = progressData.complateComponent[lang];
-    } else{
-      progressBarsParrent.innerHTML = `
+  } else if (currPercent === 100) {
+    progressBarsParrent.innerHTML = progressData.complateComponent[lang];
+  } else {
+    progressBarsParrent.innerHTML = `
     <div ${currPercent > 0 ? `style="--progress-value: ${currPercent}"` : ''} class="progress-bar-container ${currPercent > 0 ? 'bet_made' : ''}">
           <div class="progress-bar-up-text-container progres-text-container">
               <div class="pgogress-bar-up-title-content progres-text">${progressData.upTitleContent[lang]}</div>
               <div class="progress-bar-free-start"> </div>
                 <div class="progress-bar-up-text-inner-container">
                 ${breackpoints.map((element, index) => {
-                  let brcPercent = (100 / breackpoints.length )* (index + 1);
-                  return `
+      let brcPercent = (100 / breackpoints.length) * (index + 1);
+      return `
                     <div class="progress-prize-text-container progress-prize-${brcPercent}" style="right: ${100 - brcPercent}%;">
                         <div class="progress-prize-text text">${element.topContent}</div>
                     </div>
                     `
-                  }).join("")
-                }
+    }).join("")
+      }
                 </div>
             </div>
   
           <div class="active-progress-bar-container">
-              <div class="active-progress-bar" style="width: calc(${currPercent}% - 10px)"> </div>
+              <div class="active-progress-bar" style="width: ${currPercent}%"> </div>
               <div class="progress-bar-curr-points-container">
                   <div class="progress-bar-free-start"> </div>
                   <div class="progress-bar-inner-container">
@@ -112,25 +112,25 @@ async function buildAllProgressBars(progressData) {
               <div class="progress-bar-free-start"> </div>
                 <div class="progress-bar-bottom-text-inner-container">
                 ${breackpoints.map((element, index) => {
-                  let brcPercent = (100 / breackpoints.length )* (index + 1);
-                  return `
+        let brcPercent = (100 / breackpoints.length) * (index + 1);
+        return `
                     <div class="progress-prize-text-container progress-prize-${brcPercent}" style="right: ${100 - brcPercent}%;">
                         <div class="progress-prize-text text">${element.bottomContent}</div>
                     </div>
                     `
-                  }).join("")
-                }
+      }).join("")
+      }
                 </div>
                 
           </div>
   
       </div>
     `
-    }
-  
-    progressBar.innerHTML = "";
-    progressBar.appendChild(progressBarsParrent);
   }
+
+  progressBar.innerHTML = "";
+  progressBar.appendChild(progressBarsParrent);
+}
 
 function calculatePercent(start, end, value) {
   const range = end - start;
@@ -143,7 +143,7 @@ function buildProgressBar(progressElem, parent, data) {
   const progress =
     Math.round(
       calculatePercent(progressElem.range.start, progressElem.range.end, data) *
-        10
+      10
     ) / 10;
 
   const progressItemsHTML = progressElem.progress
@@ -216,27 +216,32 @@ function buildProgressBar(progressElem, parent, data) {
         `;
 }
 
-function getDateBasedValue() {
-  const progressData = getProgressData();
+function getDateBasedValue(data) {
+  let progressData;
+  if (!data) {
+    progressData = getProgressData();
+  } else {
+    progressData = data;
+  }
   if (!progressData || !progressData.dateValues) {
-      return "0";
+    return "0";
   }
 
   const dateValues = progressData.dateValues;
 
   const tbilisiDate = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Tbilisi",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
+    timeZone: "Asia/Tbilisi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
   }).format(new Date());
 
   return dateValues[tbilisiDate] || "0";
 }
 
 
-async function showProgressBarMrch() {
-  const todayValue = getDateBasedValue();
+async function showProgressBarMrch(data) {
+  const todayValue = getDateBasedValue(data);
   const authData = extractAuthDataFromCookie();
   if (!authData) return 0;
 
@@ -268,6 +273,6 @@ async function showProgressBarMrch() {
 function madeProgressBar() {
   const progressData = getProgressData();
   if (progressData) {
-      buildAllProgressBars(progressData);
+    buildAllProgressBars(progressData);
   }
 }
