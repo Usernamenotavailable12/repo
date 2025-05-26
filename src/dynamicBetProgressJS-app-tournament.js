@@ -1,21 +1,17 @@
 let amountProgressMR = 0;
-let cachedProgressData = null;
 
 function getProgressData() {
-  if (!cachedProgressData) {
-    const dataElement = document.getElementById("progressBarData");
-    if (!dataElement) {
-      console.error("progressBarData element not found");
-      return null;
-    }
-    try {
-      cachedProgressData = JSON.parse(dataElement.textContent);
-    } catch (e) {
-      console.error("Error parsing progressBarData:", e);
-      return null;
-    }
+  const dataElement = document.getElementById("progressBarData");
+  if (!dataElement) {
+    console.error("progressBarData element not found");
+    return null;
   }
-  return cachedProgressData;
+  try {
+    return JSON.parse(dataElement.textContent);
+  } catch (e) {
+    console.error("Error parsing progressBarData:", e);
+    return null;
+  }
 }
 
 async function buildAllProgressBars(progressData) {
@@ -62,7 +58,6 @@ async function buildAllProgressBars(progressData) {
     ru: "Регистрация",
     tr: "Kayıt"
   }
-
 
   if (!isUserLoginned) {
     progressBarsParrent.innerHTML = `
@@ -239,7 +234,6 @@ function getDateBasedValue(data) {
   return dateValues[tbilisiDate] || "0";
 }
 
-
 async function showProgressBarMrch(data) {
   const todayValue = getDateBasedValue(data);
   const authData = extractAuthDataFromCookie();
@@ -267,8 +261,6 @@ async function showProgressBarMrch(data) {
     return 0;
   }
 }
-
-
 
 function madeProgressBar() {
   const progressData = getProgressData();
