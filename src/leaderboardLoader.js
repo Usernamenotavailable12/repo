@@ -27,6 +27,7 @@ constructor(leaderboardsInfo, parrentElement) {
       this.outComponent = leaderboardsInfo.outComponent;
       this.parrentElement = parrentElement;
       this.currentUserInfo.id = extractAuthDataFromCookie()?.userId;
+      this.currentUserInfo.tokken = extractAuthDataFromCookie()?.accessToken;
       this.locale = document.documentElement.getAttribute('lang') || 'en';
       this.getAllData();
 
@@ -462,6 +463,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
                       }
                   }`,
                   variables: { tournamentId: sub.tournamentId },
+                  accessToken: this.currentUserInfo?.tokken,
               }
           }));
       });
