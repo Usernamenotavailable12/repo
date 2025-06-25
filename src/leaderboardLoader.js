@@ -1177,7 +1177,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
         data?.bonus?.reward?.type === this.REWARD_TYPES.FIXED
       )}`]: () => data?.bonus?.reward?.amounts?.[0]?.value + " ₾",
 
-      [`title-${Boolean(data?.currencyCode === this.REWARD_TYPES.LP)}`]: () => `${data?.amount}<div class="${this.REWARD_TYPES.LPFE}"> </div`,
+      [`title-${Boolean(data?.currencyCode === this.REWARD_TYPES.LP)}`]: () => `${data?.amount}<div class="${this.REWARD_TYPES.LP}"> </div`,
 
       [`title-${Boolean(data?.currencyCode === this.REWARD_TYPES.LPFE)}`]: () => `${data?.amount}<div class="${this.REWARD_TYPES.LPFE}"> </div>`,
 
