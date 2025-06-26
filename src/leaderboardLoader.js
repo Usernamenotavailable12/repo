@@ -1164,7 +1164,6 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
   getTablePrizeText(data) {
     if (!data) return "";
 
-    console.log(data)
 
     const prizeTextMap = {
       [`freespins-${Boolean(
