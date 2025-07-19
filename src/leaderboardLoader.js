@@ -287,7 +287,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
 
   async getTournamentData(leaderboardId, actionsCount, DateNow) {
     try {
-      const query = `query TournamentConnection( $tournamentId: ID $status: [TournamentStatus!] $first: Int $orderBy: [UserTournamentOrderByInput!] ) { tournamentConnection(tournamentId: $tournamentId, status: $status) { edges { node { actions { action { ... on GiveBonusAction { bonus { reward { ... on FreespinsBonusReward { amount type } } } } ... on GiveAndActivateBonusAction { bonus { reward { ... on FixedBonusReward { type amounts { value } } } } } ... on GiveBoxAction { box { type description } } ... on CreateTicketAction { title } ... on GiveLoyaltyPointsAction { amount currencyCode } } } endsAt startsAt userTournamentConnection(first: $first, orderBy: $orderBy) { edges { node { position points user { userId displayName } } } } } } } }`;
+      const query = `query TournamentConnection( $tournamentId: ID $status: [TournamentStatus!] $first: Int $orderBy: [UserTournamentOrderByInput!] ) { tournamentConnection(tournamentId: $tournamentId, status: $status) { edges { node { actions { action { ... on GiveBonusAction { bonus { reward { ... on FreespinsBonusReward { amount type } } } } ... on GiveAndActivateBonusAction { bonus { reward { ... on FixedBonusReward { type amounts { value } } } } } ... on GiveBoxAction { box { type description } } ... on CreateTicketAction { title } ... on GiveLoyaltyPointsAction { amount currencyCode } } } endsAt startsAt userTournamentConnection(first: $first, orderBy: $orderBy) { edges { node { position points user { userId nickname avatarUri } } } } } } } }`;
 
       const variables = {
         tournamentId: leaderboardId,
@@ -375,6 +375,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
     const query = `query User($userId: ID!) {
           user(userId: $userId) {
               nickname
+              avatarUri
           }
       }`;
 
@@ -383,6 +384,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
     try {
       const data = await this.executeGraphQLQuery(query, variables);
       this.currentUserInfo.nickname = data?.data?.user?.nickname;
+      this.currentUserInfo.avatarUri = data?.data?.user?.avatarUri || null;
     } catch (error) {
       console.error("Error fetching user nickname:", error);
     }
@@ -482,7 +484,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
     if (nicknameElement && pointsElement && positionElement) {
       positionElement.textContent = userItem.position;
       nicknameElement.textContent = maskUsername(
-        userItem.user.displayName,
+        userItem.user.nickname,
         userItem.user.userId,
         currentUserId
       );
@@ -539,7 +541,7 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
           position: 0,
           user: {
             userId: userTournament.userId,
-            displayName: userTournament.user?.nickname || "Player",
+            nickname: userTournament.user?.nickname || "Player",
           },
         },
       });
@@ -1011,9 +1013,13 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
               <div class="leaderboard-row-position">
                   ${data.usersData[i]?.node.position || "-"}
               </div>
-              <div class="leaderboard-row-nickname">
+              <div style="position: relative;text-align: start;padding-left: 25%;padding-right: 0;" class="leaderboard-row-nickname">
+                <img style="margin-right: 5px;transform: translateY(3px);" width="20px" height="20px" src="${
+                    data.usersData[i]?.node.user.avatarUri ||
+                    "https://www.ambassadoribet.com/_internal/ts-images/5da2b4d5-59f6-412a-82c3-f6a272b532be/dev/e7db1252-8bcd-4699-b687-b66052c15cca/user-indicator.svg"
+                }" class="leaderboard-row-avatar">
                   ${maskUsername(
-                    data.usersData[i]?.node.user.displayName || "-",
+                    data.usersData[i]?.node.user.nickname || "-",
                     userId,
                     this.currentUserInfo.id
                   )}
@@ -1049,7 +1055,11 @@ C255,161.018,253.42,157.202,250.606,154.389z"/>
                       <div class="leaderboard-row-position">
                           ${data?.position || "-"}
                       </div>
-                      <div class="leaderboard-row-nickname">
+                      <div style="position: relative;text-align: start;padding-left: 25%;padding-right: 0;" class="leaderboard-row-nickname">
+                           <img style="margin-right: 5px;transform: translateY(3px);" width="20px" height="20px" src="${
+                            this?.currentUserInfo?.avatarUri ||
+                            "https://www.ambassadoribet.com/_internal/ts-images/5da2b4d5-59f6-412a-82c3-f6a272b532be/dev/e7db1252-8bcd-4699-b687-b66052c15cca/user-indicator.svg"
+                          }" class="leaderboard-row-avatar">
                           ${this?.currentUserInfo?.nickname}
                       </div>
                       <div class="leaderboard-row-points">
