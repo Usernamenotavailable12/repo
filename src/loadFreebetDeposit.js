@@ -1,3 +1,5 @@
+// depricated
+
 const loadFreebetDeposit = () => {
   const userData = extractAuthDataFromCookie();
   if(!userData || !userData.userId || !userData.accessToken || !userData.accessToken === ""){
